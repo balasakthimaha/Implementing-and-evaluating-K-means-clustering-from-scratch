@@ -1,0 +1,9 @@
+Inertia Values (WCSS):
+K=2: 9308.01
+K=3: 2009.21
+K=4: 1967.19
+K=5: 1925.93
+K=6: 1898.35
+
+Elbow Method Interpretation:
+From the inertia values, we observe a sharp decrease until around K=4, after which the improvement becomes marginal. Thus, the optimal K ≈ 4.
