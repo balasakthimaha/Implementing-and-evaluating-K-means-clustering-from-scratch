@@ -1,2 +1,8 @@
-# Analysis (200+ words)
-The K-Means clustering experiment was conducted using a synthetic 2D dataset...
+# Analysis Report
+
+### Training Notes
+- Implemented gradient descent manually.
+- Verified sigmoid and cost function stability.
+
+### Evaluation
+Accuracy and loss can be computed after training using real dataset inputs.
