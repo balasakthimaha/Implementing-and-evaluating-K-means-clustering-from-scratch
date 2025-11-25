@@ -6,28 +6,40 @@ from kmeans import KMeans
 X, _ = make_blobs(n_samples=500, centers=4, cluster_std=1.2, random_state=42)
 
 wcss_results = []
-silhouette_results = []
+sil_results = []
+ascii_map = []
+
+best_k = 0
+best_sil = -1
+best_labels = None
 
 for k in range(2, 8):
     model = KMeans(k)
     model.fit(X)
 
-    wcss = model.wcss(X)
-    wcss_results.append((k, wcss))
-
     labels = np.zeros(len(X), dtype=int)
-    for cluster_id, points in enumerate(model.clusters):
-        labels[points] = cluster_id
+    for c_id, pts in enumerate(model.clusters):
+        labels[pts] = c_id
 
-    sil_score = silhouette_score(X, labels)
-    silhouette_results.append((k, sil_score))
+    wcss = model.wcss(X)
+    sil = silhouette_score(X, labels)
 
-with open("elbow_results.txt", "w") as f:
-    for k, w in wcss_results:
-        f.write(f"K={k}, WCSS={w}\n")
+    wcss_results.append(f"K={k}, WCSS={wcss}")
+    sil_results.append(f"K={k}, Silhouette={sil}")
 
-with open("silhouette_results.txt", "w") as f:
-    for k, s in silhouette_results:
-        f.write(f"K={k}, Silhouette={s}\n")
+    if sil > best_sil:
+        best_sil = sil
+        best_k = k
+        best_labels = labels
 
-print("DONE")
+# ASCII visualization
+for i in range(len(X)):
+    ascii_map.append(f"Point {i}: Cluster {best_labels[i]}")
+
+# Save outputs
+with open("wcss_results.txt","w") as f: f.write("\n".join(wcss_results))
+with open("silhouette_results.txt","w") as f: f.write("\n".join(sil_results))
+with open("ascii_clusters.txt","w") as f: f.write("\n".join(ascii_map))
+with open("cluster_assignments.txt","w") as f: f.write(",".join(map(str,best_labels)))
+
+print("Optimal K =", best_k)
