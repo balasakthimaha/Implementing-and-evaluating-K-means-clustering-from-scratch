@@ -1,59 +1,44 @@
-"""
-Synthetic K-Means experiment.
-
-This script:
-1. Generates a clearly clustered 2D synthetic data set.
-2. Runs our from‑scratch K‑Means implementation for K in [2, 3, 4, 5, 6].
-3. Computes inertia and Silhouette Score for each K.
-4. Prints a small table with the results and highlights the chosen K.
-
-The written discussion of these results can be found in `analysis.txt`.
-"""
-
 import numpy as np
-from kmeans import kmeans, silhouette_score
+import matplotlib.pyplot as plt
+from kmeans import kmeans
+from silhouette import silhouette_score
+import os
 
+def make_blobs(n_samples=300, centers=3, cluster_std=0.6, random_state=42):
+    rng = np.random.default_rng(random_state)
+    centers_coords = rng.normal(loc=0.0, scale=5.0, size=(centers, 2))
+    X = []
+    y = []
+    per_cluster = n_samples // centers
+    for i, c in enumerate(centers_coords):
+        pts = rng.normal(loc=c, scale=cluster_std, size=(per_cluster, 2))
+        X.append(pts)
+        y += [i] * per_cluster
+    X = np.vstack(X)
+    return X, np.array(y)
 
-def generate_synthetic_data(n_per_cluster: int = 150, rng: np.random.Generator | None = None):
-    if rng is None:
-        rng = np.random.default_rng(42)
-
-    # Three fairly well separated Gaussian blobs in 2D
-    centers = np.array([
-        [-4.0, 0.0],
-        [0.0, 4.0],
-        [4.0, -1.5],
-    ])
-
-    X_list = []
-    for cx, cy in centers:
-        cov = np.array([[0.8, 0.2],
-                        [0.2, 0.5]])
-        points = rng.multivariate_normal(mean=[cx, cy], cov=cov, size=n_per_cluster)
-        X_list.append(points)
-
-    X = np.vstack(X_list)
-    return X
-
-
-def run_experiment():
-    rng = np.random.default_rng(123)
-    X = generate_synthetic_data(rng=rng)
-
-    print("K	Inertia		Silhouette")
-    print("-" * 40)
+def run_experiments():
+    X, y_true = make_blobs(n_samples=300, centers=3, cluster_std=0.8)
     results = []
-    for k in range(2, 7):
-        centroids, labels, inertia = kmeans(X, k=k, rng=rng)
-        s = silhouette_score(X, labels)
-        results.append((k, inertia, s))
-        print(f"{k}	{inertia:10.2f}	{s:8.3f}")
+    ks = range(2,7)
+    for k in ks:
+        centroids, labels, inert = kmeans(X, k, random_state=42)
+        sil = silhouette_score(X, labels)
+        results.append((k, inert, sil))
+        print(f"K={k}: inertia={inert:.2f}, silhouette={sil:.4f}")
+        # save a simple plot
+        fig, ax = plt.subplots()
+        ax.scatter(X[:,0], X[:,1], c=labels, s=10)
+        ax.scatter(centroids[:,0], centroids[:,1], marker='X', s=100, edgecolors='k')
+        ax.set_title(f'K={k}  Silhouette={sil:.3f}')
+        os.makedirs('figures', exist_ok=True)
+        fig.savefig(f'figures/k_{k}.png')
+        plt.close(fig)
+    # save results
+    with open('results.txt', 'w') as f:
+        for k, inert, sil in results:
+            f.write(f"K={k}, inertia={inert:.4f}, silhouette={sil:.6f}\n")
+    print('Saved results.txt and figures/')
 
-    # Choose K with the highest silhouette; in this data it is K=3
-    best_k, best_inertia, best_s = max(results, key=lambda t: t[2])
-    print("\nChosen K based on silhouette:", best_k)
-    print(f"Best inertia: {best_inertia:.2f}, best silhouette: {best_s:.3f}")
-
-
-if __name__ == "__main__":
-    run_experiment()
+if __name__ == '__main__':
+    run_experiments()
