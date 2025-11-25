@@ -1,8 +1,2 @@
-# Analysis Report
-
-### Training Notes
-- Implemented gradient descent manually.
-- Verified sigmoid and cost function stability.
-
-### Evaluation
-Accuracy and loss can be computed after training using real dataset inputs.
+# Final Analysis
+Optimal K = 4 based on WCSS elbow and highest silhouette score.
