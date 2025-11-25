@@ -7,24 +7,15 @@ class LogisticRegressionScratch:
         self.epochs = epochs
 
     def sigmoid(self, z):
-        return 1 / (1 + np.exp(-z))
+        return 1/(1+np.exp(-z))
 
     def fit(self, X, y):
-        n_samples, n_features = X.shape
-        self.weights = np.zeros(n_features)
-        self.bias = 0
-
+        self.theta = np.zeros(X.shape[1])
         for _ in range(self.epochs):
-            linear = np.dot(X, self.weights) + self.bias
-            y_pred = self.sigmoid(linear)
-
-            dw = (1/n_samples) * np.dot(X.T, (y_pred - y))
-            db = (1/n_samples) * np.sum(y_pred - y)
-
-            self.weights -= self.lr * dw
-            self.bias -= self.lr * db
+            z = X.dot(self.theta)
+            h = self.sigmoid(z)
+            gradient = X.T.dot(h - y) / y.size
+            self.theta -= self.lr * gradient
 
     def predict(self, X):
-        linear = np.dot(X, self.weights) + self.bias
-        y_pred = self.sigmoid(linear)
-        return [1 if i > 0.5 else 0 for i in y_pred]
+        return (self.sigmoid(X.dot(self.theta)) >= 0.5).astype(int)
