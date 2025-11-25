@@ -1,0 +1,5 @@
+Detailed Project Report
+=======================
+
+This ZIP contains a runnable project implementing Logistic Regression from scratch. 
+Follow README instructions to run. The main.py reproduces dataset generation, training, tuning, and evaluation.

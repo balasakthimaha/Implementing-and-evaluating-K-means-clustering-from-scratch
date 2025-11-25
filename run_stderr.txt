@@ -1,0 +1,4 @@
+  File "/mnt/data/logistic_regression_project/main.py", line 154
+    f.write(\"\\nValidation metrics:\\n\") 
+             ^
+SyntaxError: unexpected character after line continuation character
