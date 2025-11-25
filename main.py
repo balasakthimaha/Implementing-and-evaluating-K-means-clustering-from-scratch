@@ -1,21 +1,18 @@
 import numpy as np
 from sklearn.linear_model import LogisticRegression
-from logistic_regression import LogisticRegressionScratch
+from logistic_regression_scratch import LogisticRegressionScratch
+from metrics import classification_metrics
 
-# Example synthetic data
 np.random.seed(0)
-X = np.random.randn(100, 2)
-y = (X[:, 0] + X[:, 1] > 0).astype(int)
+X=np.random.randn(200,3)
+y=(X[:,0]*0.8 + X[:,1]*-0.3 + 0.5 >0).astype(int)
 
-# Scratch implementation
-model_scratch = LogisticRegressionScratch(lr=0.1, iterations=2000)
-model_scratch.fit(X, y)
-preds_scratch = model_scratch.predict(X)
+model=LogisticRegressionScratch()
+model.fit(X,y)
+pred=model.predict(X)
 
-# Sklearn implementation
-model_sklearn = LogisticRegression()
-model_sklearn.fit(X, y)
-preds_sklearn = model_sklearn.predict(X)
+print("Scratch metrics:", classification_metrics(y,pred))
+print("Odds ratios:", model.odds_ratios())
 
-print("Scratch accuracy:", (preds_scratch == y).mean())
-print("Sklearn accuracy:", (preds_sklearn == y).mean())
+model2=LogisticRegression().fit(X,y)
+print("Sklearn score:", model2.score(X,y))
