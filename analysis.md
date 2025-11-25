@@ -1,15 +1,8 @@
-# Final Analysis Report
+# Analysis Report
 
-Both WCSS (Elbow) and Silhouette Score were evaluated for K=2 to K=7.
+### Training Notes
+- Implemented gradient descent manually.
+- Verified sigmoid and cost function stability.
 
-Silhouette Score highest at:
-    K = 4
-
-Therefore, the optimal number of clusters is:
-    ✔ K = 4
-
-All required deliverables have been included:
-- WCSS results
-- Silhouette results
-- ASCII cluster visualization
-- Final cluster assignments list
+### Evaluation
+Accuracy and loss can be computed after training using real dataset inputs.

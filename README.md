@@ -1,13 +1,8 @@
-# K-Means Clustering From Scratch (Final Project)
+# Implementing and Evaluating Logistic Regression from Scratch
 
-This submission contains:
-- Clean K-Means implementation using only NumPy
-- Synthetic dataset generation
-- WCSS + Silhouette Score calculation
-- Final chosen K justification
-- ASCII cluster visualization (text-based, required)
-- Final cluster assignments (comma-separated)
-- Single consolidated analysis file
-
-Run:
-    python main.py
+This project implements Logistic Regression **without using machine-learning libraries**.
+It includes:
+- A NumPy-based logistic regression model
+- Training loop with gradient descent
+- Evaluation metrics (accuracy, loss)
+- Analysis report
