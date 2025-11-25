@@ -1,9 +1,56 @@
-Inertia Values (WCSS):
-K=2: 9308.01
-K=3: 2009.21
-K=4: 1967.19
-K=5: 1925.93
-K=6: 1898.35
+Implementing K-Means from scratch makes it much easier to see how the different
+moving parts of the algorithm interact with evaluation metrics such as inertia
+and the Silhouette Score. In this project I generated a simple two-dimensional
+synthetic dataset consisting of three well-separated Gaussian clusters. Each
+cluster contains the same number of points and has a moderately elongated
+covariance structure so that the shapes are not perfectly spherical but still
+visually distinct. Working with synthetic data keeps the focus on the behavior
+of the algorithm rather than on domain-specific quirks of a real dataset.
 
-Elbow Method Interpretation:
-From the inertia values, we observe a sharp decrease until around K=4, after which the improvement becomes marginal. Thus, the optimal K ≈ 4.
+After generating the data, I ran my NumPy-only K-Means implementation for
+values of K between 2 and 6. For each value of K, the script records two
+quantities: the inertia and the mean Silhouette Score. Inertia is the
+within-cluster sum of squared distances from each point to the centroid of the
+cluster it has been assigned to. Lower inertia means that points are, on
+average, closer to their centroids, so clusters are more compact. However,
+inertia is monotonically non-increasing with respect to K: if we allow more
+clusters, we can always fit the data more tightly. This is why inertia alone
+cannot be used to automatically pick the best K.
+
+The Silhouette Score addresses this limitation by balancing compactness with
+separation. For every point, I compute the average distance to other points in
+the same cluster (a), and the average distance to points in every other
+cluster. The minimum of those other-cluster distances is called b. The
+Silhouette value for a point is then (b - a) / max(a, b), which lies between
+-1 and 1. Intuitively, the score is high when a point is much closer to its own
+cluster than to any competing cluster, and near zero when the point lies on a
+border between clusters. For each run of K-Means, I compute the mean
+Silhouette value over all points to summarize the overall clustering quality.
+
+In the results table produced by the script, inertia steadily decreases as K
+grows from 2 to 6, which is expected. The Silhouette Score, on the other hand,
+peaks at K = 3. When K = 2, the algorithm is forced to merge two genuine
+clusters together, producing one large, elongated group whose internal
+distances are relatively high. This hurts both inertia and the Silhouette
+Score. When K = 3, each true Gaussian blob is captured by its own centroid,
+leading to low within-cluster distances and large between-cluster distances;
+most points sit firmly inside one cluster and far from the others, so their
+Silhouette values are close to one.
+
+For K greater than 3, the algorithm begins to split true clusters into
+artificial subclusters. This can slightly reduce inertia, because centroids are
+allowed to move closer to local pockets of points, but it also brings some
+clusters closer together in space. Points near the boundary between two
+subclusters of the same true group see their a and b values become more
+similar, which lowers their Silhouette values. As a result, the mean
+Silhouette Score drops below the K = 3 value for all larger K, even though
+inertia continues to fall. This trade-off clearly illustrates why the
+Silhouette metric is better suited than inertia alone for picking K.
+
+Based on these observations, I conclude that K = 3 is the most appropriate
+choice for this synthetic dataset. It respects the true structure of the data,
+produces compact and well-separated clusters, and simultaneously yields low
+inertia and a high Silhouette Score. The exercise also demonstrates how a
+careful, low-level implementation of K-Means and its evaluation metrics can
+deepen understanding of clustering behavior beyond what is typically gained
+from calling a library function with default parameters.
